@@ -1,23 +1,12 @@
 public class Board {
     public Block[][] board;
-    int grids = 4;
-
-    int border = 0;
-
-    public int score = 0;
-    int highBlock = 0;
-
-    public Board()
-    {
-        board = new Block[4][4];
-        for ( int i = 0; i < board.length; i++ )
-        {
-            for ( int j = 0; j < board[i].length; j++ )
-            {
-                board[i][j] = new Block();
-            }
-        }
+    private int grids;
+    public int getGrids() {
+        return grids;
     }
+    int border = 0;
+    public int score = 0;
+
     public Board( int grids )
     {
         this.grids = grids;
@@ -31,40 +20,10 @@ public class Board {
         }
     }
 
-    public Board( int lose, int grids )
-    {
-        this.grids = grids;
-        board = new Block[grids][grids];
-        for ( int i = 0; i < board.length; i++ )
-        {
-            for ( int j = 0; j < board[i].length; j++ )
-            {
-                board[i][j] = new Block( ( lose + i + j ) * ( i + j ) );
-            }
-        }
-    }
 
     public Block[][] getBoard()
     {
         return board;
-    }
-    public void reset() {
-        // Сброс всех клеток доски
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = new Block(0);
-            }
-        }
-
-        // Сброс счета
-        score = 0;
-
-        // Сброс максимального значения блока
-        highBlock = 0;
-
-        // Добавление двух начальных блоков
-        spawn();
-        spawn();
     }
 
     public int getScore()
@@ -86,32 +45,7 @@ public class Board {
         }
         return high;
     }
-    public void print()
-    {
-        for ( int i = 0; i < board.length; i++ )
-        {
-            for ( int j = 0; j < board[i].length; j++ )
-            {
-                String s = board[i][j].toString() + " ";
-                System.out.print( s );
-            }
-            System.out.println( "" );
-        }
-        System.out.println( "Score: " + score );
-    }
-    public String toString()
-    {
-        String s = "";
-        for ( int i = 0; i < board.length; i++ )
-        {
-            for ( int j = 0; j < board[i].length; j++ )
-            {
-                s += board[i][j].toString() + " ";
-            }
-            s += "\n";
-        }
-        return s;
-    }
+
     public void spawn()
     {
         boolean empty = true;
@@ -137,7 +71,7 @@ public class Board {
         }
 
     }
-    public boolean blackOut()
+    public boolean isBoardFilled()
     {
         int count = 0;
         for ( int i = 0; i < board.length; i++ )
@@ -157,7 +91,7 @@ public class Board {
         return false;
     }
 
-    public boolean gameOver()
+    public boolean isGameLost()
     {
         int count = 0;
         for ( int i = 0; i < board.length; i++ )
@@ -254,138 +188,122 @@ public class Board {
         return false;
     }
 
-    public void up()
-    {
-        for ( int i = 0; i < grids; i++ )
-        {
+    public boolean up() {
+        boolean moved = false;
+        for (int i = 0; i < grids; i++) {
             border = 0;
-            for ( int j = 0; j < grids; j++ )
-            {
-                if ( board[j][i].getValue() != 0 )
-                {
-                    if ( border <= j )
-                    {
-                        verticalMove( j, i, "up" );
+            for (int j = 0; j < grids; j++) {
+                if (board[j][i].getValue() != 0) {
+                    if (border <= j) {
+                        if (verticalMove(j, i, "up")) {
+                            moved = true;
+                        }
                     }
                 }
             }
         }
-    }
-    public void down()
-    {
-        for ( int i = 0; i < grids; i++ )
-        {
-            border = ( grids - 1 );
-            for ( int j = grids - 1; j >= 0; j-- )
-            {
-                if ( board[j][i].getValue() != 0 )
-                {
-                    if ( border >= j )
-                    {
-                        verticalMove( j, i, "down" );
-                    }
-                }
-            }
-        }
+        return moved;
     }
 
-    private void verticalMove( int row, int col, String direction )
-    {
+    public boolean down() {
+        boolean moved = false;
+        for (int i = 0; i < grids; i++) {
+            border = (grids - 1);
+            for (int j = grids - 1; j >= 0; j--) {
+                if (board[j][i].getValue() != 0) {
+                    if (border >= j) {
+                        if (verticalMove(j, i, "down")) {
+                            moved = true;
+                        }
+                    }
+                }
+            }
+        }
+        return moved;
+    }
+
+    public boolean left() {
+        boolean moved = false;
+        for (int i = 0; i < grids; i++) {
+            border = 0;
+            for (int j = 0; j < grids; j++) {
+                if (board[i][j].getValue() != 0) {
+                    if (border <= j) {
+                        if (horizontalMove(i, j, "left")) {
+                            moved = true;
+                        }
+                    }
+                }
+            }
+        }
+        return moved;
+    }
+
+    public boolean right() {
+        boolean moved = false;
+        for (int i = 0; i < grids; i++) {
+            border = (grids - 1);
+            for (int j = (grids - 1); j >= 0; j--) {
+                if (board[i][j].getValue() != 0) {
+                    if (border >= j) {
+                        if (horizontalMove(i, j, "right")) {
+                            moved = true;
+                        }
+                    }
+                }
+            }
+        }
+        return moved;
+    }
+
+    private boolean verticalMove(int row, int col, String direction) {
         Block initial = board[border][col];
         Block compare = board[row][col];
-        if ( initial.getValue() == 0 || initial.getValue() == compare.getValue() )
-        {
-            if ( row > border || ( direction.equals( "down" ) && ( row < border ) ) )
-            {
+        boolean moved = false;
+        if (initial.getValue() == 0 || initial.getValue() == compare.getValue()) {
+            if (row > border || (direction.equals("down") && (row < border))) {
                 int addScore = initial.getValue() + compare.getValue();
-                if ( initial.getValue() != 0 )
-                {
+                if (initial.getValue() != 0) {
                     score += addScore;
                 }
-                initial.setValue( addScore );
-                compare.setValue( 0 );
+                initial.setValue(addScore);
+                compare.setValue(0);
+                moved = true;
             }
-        }
-        else
-        {
-            if ( direction.equals( "down" ) )
-            {
+        } else {
+            if (direction.equals("down")) {
                 border--;
-            }
-            else
-            {
+            } else {
                 border++;
             }
-            verticalMove( row, col, direction );
+            moved = verticalMove(row, col, direction);
         }
+        return moved;
     }
 
-    public void left()
-    {
-        for ( int i = 0; i < grids; i++ )
-        {
-            border = 0;
-            for ( int j = 0; j < grids; j++ )
-            {
-                if ( board[i][j].getValue() != 0 )
-                {
-                    if ( border <= j )
-                    {
-                        horizontalMove( i, j, "left" );
-                    }
-                }
-            }
-        }
-    }
-
-    public void right()
-    {
-        for ( int i = 0; i < grids; i++ )
-        {
-            border = ( grids - 1 );
-            for ( int j = ( grids - 1 ); j >= 0; j-- )
-            {
-                if ( board[i][j].getValue() != 0 )
-                {
-                    if ( border >= j )
-                    {
-                        horizontalMove( i, j, "right" );
-                    }
-                }
-            }
-        }
-    }
-
-
-    private void horizontalMove( int row, int col, String direction )
-    {
+    private boolean horizontalMove(int row, int col, String direction) {
         Block initial = board[row][border];
         Block compare = board[row][col];
-        if ( initial.getValue() == 0 || initial.getValue() == compare.getValue() )
-        {
-            if ( col > border || ( direction.equals( "right" ) && ( col < border ) ) )
-            {
+        boolean moved = false;
+        if (initial.getValue() == 0 || initial.getValue() == compare.getValue()) {
+            if (col > border || (direction.equals("right") && (col < border))) {
                 int addScore = initial.getValue() + compare.getValue();
-                if ( initial.getValue() != 0 )
-                {
+                if (initial.getValue() != 0) {
                     score += addScore;
                 }
-                initial.setValue( addScore );
-                compare.setValue( 0 );
+                initial.setValue(addScore);
+                compare.setValue(0);
+                moved = true;
             }
-        }
-        else
-        {
-            if ( direction.equals( "right" ) )
-            {
+        } else {
+            if (direction.equals("right")) {
                 border--;
-            }
-            else
-            {
+            } else {
                 border++;
             }
-            horizontalMove( row, col, direction );
+            moved = horizontalMove(row, col, direction);
         }
+        return moved;
     }
 
 }
