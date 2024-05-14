@@ -12,6 +12,7 @@ public class Game extends JPanel implements KeyListener {
         frame.addKeyListener( newGame );
         frame.getContentPane().add( newGame );
         frame.setSize( 600, 400 );
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible( true );
         frame.setResizable( false );
@@ -46,7 +47,7 @@ public class Game extends JPanel implements KeyListener {
                 moved = game.right();
                 break;
             case KeyEvent.VK_ENTER:
-                game = new Board(4);
+                game = new Board(game.getGrids());
                 game.spawn();
                 game.spawn();
                 gameOver = false;
@@ -63,10 +64,10 @@ public class Game extends JPanel implements KeyListener {
             gameOver = true;
             JOptionPane.showMessageDialog(frame, "Congratulations, you've won!\nYou can restart the game, press ENTER", "Winner", JOptionPane.INFORMATION_MESSAGE);
         }
-        if (game.isGameLost()) {
-            gameOver = true;
-            JOptionPane.showMessageDialog(frame, "You lose\nYou can restart the game, press ENTER", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-        }
+//        if (game.isGameLost()) {
+//            gameOver = true;
+//            JOptionPane.showMessageDialog(frame, "You lose\nYou can restart the game, press ENTER", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+//        }
     }
 
     @Override

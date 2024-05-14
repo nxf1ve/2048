@@ -4,8 +4,12 @@ public class Board {
     public int getGrids() {
         return grids;
     }
+    public void setGrids(int count) {
+        grids = count;
+    }
     int border = 0;
     public int score = 0;
+
 
     public Board( int grids )
     {
@@ -51,8 +55,8 @@ public class Board {
         boolean empty = true;
         while ( empty )
         {
-            int row = (int)( Math.random() * 4 );
-            int col = (int)( Math.random() * 4 );
+            int row = (int)( Math.random() * grids );
+            int col = (int)( Math.random() * grids );
             double x = Math.random();
             if ( board[row][col].getValue() == 0 )
             {
@@ -71,27 +75,22 @@ public class Board {
         }
 
     }
-    public boolean isBoardFilled()
-    {
+    public boolean isBoardFilled() {
         int count = 0;
-        for ( int i = 0; i < board.length; i++ )
-        {
-            for ( int j = 0; j < board[i].length; j++ )
-            {
-                if ( board[i][j].getValue() > 0 )
-                {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j].getValue() > 0) {
                     count++;
                 }
             }
         }
-        if ( count == 16 )
-        {
+        if (count == grids * grids) {
             return true;
         }
         return false;
     }
 
-    public boolean isGameLost()
+    public boolean isGameLost4x4()
     {
         int count = 0;
         for ( int i = 0; i < board.length; i++ )
@@ -181,7 +180,104 @@ public class Board {
                 }
             }
         }
-        if ( count == 16 )
+        if ( count == grids*grids )
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isGameLost5x5()
+    {
+        int count = 0;
+        for ( int i = 0; i < board.length; i++ )
+        {
+            for ( int j = 0; j < board[i].length; j++ )
+            {
+                if ( board[i][j].getValue() > 0 )
+                {
+                    if ( i == 0 && j == 0 )
+                    {
+                        if ( board[i][j].getValue() != board[i + 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 0 && j == 4 )
+                    {
+                        if ( board[i][j].getValue() != board[i + 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 4 && j == 4 )
+                    {
+                        if ( board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 4 && j == 0 )
+                    {
+                        if ( board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 0 && ( j == 1 || j == 2 || j ==3 ) )
+                    {
+                        if ( board[i][j].getValue() != board[i + 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 3 && ( j == 1 || j == 2 || j == 3 ) )
+                    {
+                        if ( board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( j == 0 && ( i == 1 || i == 2 || i == 3 ) )
+                    {
+                        if ( board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i + 1][j].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( j == 4 && ( i == 1 || i == 2 || i == 3) )
+                    {
+                        if ( board[i][j].getValue() != board[i][j - 1].getValue()
+                                && board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i + 1][j].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else
+                    {
+                        if ( board[i][j].getValue() != board[i][j - 1].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i + 1][j].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        if ( count == grids*grids )
         {
             return true;
         }
@@ -204,7 +300,6 @@ public class Board {
         }
         return moved;
     }
-
     public boolean down() {
         boolean moved = false;
         for (int i = 0; i < grids; i++) {
