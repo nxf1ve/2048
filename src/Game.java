@@ -5,13 +5,23 @@ import java.awt.event.KeyListener;
 
 public class Game extends JPanel implements KeyListener {
     private boolean gameOver = false;
-    static Game newGame = new Game();
-    Board game = new Board(4);
+    Board game;
     static JFrame frame = new JFrame( "2048" );
-    public static void OpenFrame() {
+    public void OpenFrame(Game newGame, int grids) {
+        game = new Board(grids);
         frame.addKeyListener( newGame );
         frame.getContentPane().add( newGame );
-        frame.setSize( 600, 400 );
+        switch(grids) {
+            case 4:
+                frame.setSize( 600, 400 );
+                break;
+            case 5:
+                frame.setSize( 650, 470 );
+                break;
+            case 6:
+                frame.setSize( 700, 520 );
+                break;
+        }
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible( true );
@@ -64,10 +74,10 @@ public class Game extends JPanel implements KeyListener {
             gameOver = true;
             JOptionPane.showMessageDialog(frame, "Congratulations, you've won!\nYou can restart the game, press ENTER", "Winner", JOptionPane.INFORMATION_MESSAGE);
         }
-//        if (game.isGameLost()) {
-//            gameOver = true;
-//            JOptionPane.showMessageDialog(frame, "You lose\nYou can restart the game, press ENTER", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-//        }
+        if (game.isGameLost()) {
+            gameOver = true;
+            JOptionPane.showMessageDialog(frame, "You lose\nYou can restart the game, press ENTER", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     @Override
@@ -103,18 +113,38 @@ public class Game extends JPanel implements KeyListener {
     {
         super.paint( g );
         Graphics2D g2 = (Graphics2D)g;
-        g2.drawString( "2048", 250, 20 );
+        int offsetX = 0, offsetY = 0;
+        switch ( game.getGrids() )
+        {
+            case 4:
+                g2.fillRect( 140, 50, 250, 250 );
+                break;
+            case 5:
+                g2.fillRect( 140, 50, 310, 310 );
+                offsetX = 25;
+                offsetY = 70;
+                break;
+            case 6:
+                g2.fillRect( 140, 50, 370, 370 );
+                offsetX = 50;
+                offsetY = 130;
+                break;
+        }
+        g2.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+
+        g2.drawString( "2048", 250 + offsetX, 20);
         g2.drawString( "Score: " + game.getScore(),
-                200 - 4 * String.valueOf( game.getScore() ).length(),
+                200 - 4 * String.valueOf( game.getScore() ).length() + offsetX,
                 40 );
         g2.drawString( "Highest Block: " + game.getHighBlock(),
-                280 - 4 * String.valueOf( game.getHighBlock() ).length(),
+                280 - 4 * String.valueOf( game.getHighBlock() ).length() + offsetX,
                 40 );
-        g2.drawString( "Press 'Enter' to Start", 210, 315 );
-        g2.drawString( "Use 'wasd' or Arrow Keys to move", 180, 335 );
+        g2.drawString( "Press 'Enter' to Start", 210 + offsetX, 315 + offsetY );
+        g2.drawString( "Use 'wasd' or Arrow Keys to move", 180 + offsetX, 335 + offsetY );
+        g2.setFont(new Font("Times New Roman", Font.BOLD, 14));
 
         g2.setColor( Color.gray );
-        g2.fillRect( 140, 50, 250, 250 );
+
         for ( int i = 0; i < game.getGrids(); i++ )
         {
             for ( int j = 0; j < game.getGrids(); j++ )

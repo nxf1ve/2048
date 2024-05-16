@@ -4,9 +4,6 @@ public class Board {
     public int getGrids() {
         return grids;
     }
-    public void setGrids(int count) {
-        grids = count;
-    }
     int border = 0;
     public int score = 0;
 
@@ -90,8 +87,7 @@ public class Board {
         return false;
     }
 
-    public boolean isGameLost4x4()
-    {
+    private int checkGameLost4x4() {
         int count = 0;
         for ( int i = 0; i < board.length; i++ )
         {
@@ -180,15 +176,9 @@ public class Board {
                 }
             }
         }
-        if ( count == grids*grids )
-        {
-            return true;
-        }
-        return false;
+        return count;
     }
-
-    public boolean isGameLost5x5()
-    {
+    private int checkGameLost5x5() {
         int count = 0;
         for ( int i = 0; i < board.length; i++ )
         {
@@ -237,7 +227,7 @@ public class Board {
                             count++;
                         }
                     }
-                    else if ( i == 3 && ( j == 1 || j == 2 || j == 3 ) )
+                    else if ( i == 4 && ( j == 1 || j == 2 || j == 3 ) )
                     {
                         if ( board[i][j].getValue() != board[i - 1][j].getValue()
                                 && board[i][j].getValue() != board[i][j + 1].getValue()
@@ -277,12 +267,121 @@ public class Board {
                 }
             }
         }
-        if ( count == grids*grids )
-        {
-            return true;
-        }
-        return false;
+        return count;
     }
+
+    private int checkGameLost6x6() {
+        int count = 0;
+        for ( int i = 0; i < board.length; i++ )
+        {
+            for ( int j = 0; j < board[i].length; j++ )
+            {
+                if ( board[i][j].getValue() > 0 )
+                {
+                    if ( i == 0 && j == 0 )
+                    {
+                        if ( board[i][j].getValue() != board[i + 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 0 && j == 5 )
+                    {
+                        if ( board[i][j].getValue() != board[i + 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 5 && j == 5 )
+                    {
+                        if ( board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 5 && j == 0 )
+                    {
+                        if ( board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 0 && ( j == 1 || j == 2 || j ==3 || j==4 ) )
+                    {
+                        if ( board[i][j].getValue() != board[i + 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( i == 5 && ( j == 1 || j == 2 || j == 3 || j == 4 ) )
+                    {
+                        if ( board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i][j - 1].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( j == 0 && ( i == 1 || i == 2 || i == 3 || i == 4 ) )
+                    {
+                        if ( board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i + 1][j].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else if ( j == 5 && ( i == 1 || i == 2 || i == 3 || i == 4) )
+                    {
+                        if ( board[i][j].getValue() != board[i][j - 1].getValue()
+                                && board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i + 1][j].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                    else
+                    {
+                        if ( board[i][j].getValue() != board[i][j - 1].getValue()
+                                && board[i][j].getValue() != board[i][j + 1].getValue()
+                                && board[i][j].getValue() != board[i - 1][j].getValue()
+                                && board[i][j].getValue() != board[i + 1][j].getValue() )
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    public boolean isGameLost()
+    {
+        int count = 0;
+        switch (grids)
+        {
+            case 4:
+                count = checkGameLost4x4();
+                break;
+            case 5:
+                count = checkGameLost5x5();
+                break;
+            case 6:
+                count = checkGameLost6x6();
+                break;
+            default:
+                break;
+        }
+        return grids*grids == count;
+    }
+
 
     public boolean up() {
         boolean moved = false;
